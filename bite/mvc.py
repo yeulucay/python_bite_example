@@ -32,6 +32,7 @@ class Controller():
     Controller base class
     """
     request = None
+    auth_secret = ''
 
     def __init__(self):
         pass

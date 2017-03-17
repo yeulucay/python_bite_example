@@ -16,6 +16,7 @@ along with Python Bite Rest Framework.  If not, see <http://www.gnu.org/licenses
 
 from bite.mvc import Controller
 from bite.routing import POST,GET,route
+from bite.auth import authorize
 
 
 class TestController(Controller):
@@ -24,6 +25,7 @@ class TestController(Controller):
         print("Test Controller Initialized")
         super(self.__class__, self).__init__()
 
+    @authorize()
     def index(self):
         print("Test.Index Method called")
         return self.ok({"test":"result"})

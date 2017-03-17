@@ -31,8 +31,9 @@ class RouteMap():
 
 class RouteManager():
 
-    def __init__(self, project_dir):
+    def __init__(self, project_dir, auth_secret):
         self.proj_dir = project_dir
+        self.auth_secret = auth_secret
         self.route_list = []
 
     def prepare_routes(self, route_map):
@@ -268,8 +269,7 @@ class RouteManager():
 
         #initialize controller
         c_init = ctrl()
-
-        #if 'HTTP_AUTHORIZATION'
+        c_init.auth_secret = self.auth_secret
 
         action = getattr(c_init, route["action"])
         method = env['REQUEST_METHOD']
@@ -277,6 +277,8 @@ class RouteManager():
         request = Request()
         request.path = env['PATH_INFO']
         request.host = env['HTTP_HOST']
+        if 'HTTP_AUTHORIZATION' in env:
+            request.headers['Authorization'] = env['HTTP_AUTHORIZATION']    
 
         p = {}
 

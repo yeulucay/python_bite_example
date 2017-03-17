@@ -51,7 +51,7 @@ class Bite():
         host -- application host information
         port -- application port information
         """
-        self.rm = RouteManager(self.config.PROJECT_DIR)
+        self.rm = RouteManager(self.config.PROJECT_DIR, self.auth_secret)
         self.rm.prepare_routes(self.route_map.route_list)
 
         httpd = make_server(host, port, self)
@@ -83,10 +83,12 @@ class Bite():
         Keyword arguments:
         auth_obj -- AuthBase subclass instance
         """
-        self.token_endpoint = self.config.TOKEN_ENDPOINT if hasattr(self.config, 'TOKEN_ENDPOINT') else '/auth/token'
-
         if issubclass(auth_cls, AuthBase):
             self.auth_cls = auth_cls
         else:
             #TODO: throw exception: not AuthBase subclass
             pass
+
+        self.token_endpoint = self.config.TOKEN_ENDPOINT if hasattr(self.config, 'TOKEN_ENDPOINT') else '/auth/token'
+
+        

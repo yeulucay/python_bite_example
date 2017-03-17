@@ -12,7 +12,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Python Bite Rest Framework.  If not, see <http://www.gnu.org/licenses/>.
 """
-import jwt, base64, datetime, json
+import jwt, base64, json
+from datetime import datetime, timezone, timedelta, tzinfo
 
 
 class AuthManager():
@@ -66,21 +67,21 @@ class AuthManager():
                 
                 # if valid_client and valid_user
                 if bite_auth.is_valid():
-                    now = datetime.datetime.now()
-                    expire_in = str(now + datetime.timedelta(minutes=20))
+                    exp = datetime.utcnow() + timedelta(minutes=20)
+
                     token_content = {
                         'user': p['username'],
                         'client_id': client_id,
-                        'expire_date': expire_in
+                        'exp': exp
                     }
                     # let user override token. AuthBase.edit_jwt is an overridable method.
                     token_content = bite_auth.edit_jwt(token_content)
                     
-                    token = jwt.encode(token_content, self.auth_secret, algorithm='HS256')                    
+                    token = jwt.encode(token_content, self.auth_secret)                    
 
                     if token:
                         result['token'] = token.decode('UTF-8')
-                        result['expire_in'] = expire_in
+                        result['expire_in'] = exp.isoformat()
                         return '200 OK', 'application/json', json.dumps(result)
                 else:
                     res_type = '401 Unauthorized'
@@ -148,5 +149,38 @@ class AuthBase():
         return self.valid_user and self.valid_client
 
 
-def authorize(roles):
-    pass
+def authorize(roles=[]):
+    """
+    authorize decorator for controller actions.
+    the method is protected with this way and requires a bearer token 
+    bearer token must be in the Authorization header of http request
+    """
+    def decorator(f):
+        def wrapped(self, *args, **kwargs):
+            if 'Authorization' in self.request.headers:
+                a_split = self.request.headers['Authorization'].strip().split()
+                
+                if len(a_split) == 2 and a_split[0].lower() == 'bearer':
+                    token = a_split[1]                    
+                    
+                    is_authorized = False
+
+                    try:
+                        token_content = jwt.decode(token, self.auth_secret) 
+                        is_authorized = True
+                    except jwt.ExpiredSignatureError:
+                        print('token expired')
+                        pass  
+                    except jwt.DecodeError:
+                        print('token decode error')            
+                        pass
+                    except jwt.InvalidTokenError:
+                        print('invalid token error')
+                        pass
+                    
+                    if not is_authorized:
+                        return self.unauthorized('Unauthorized request.')
+
+            return f(self, *args, **kwargs)
+        return wrapped
+    return decorator
