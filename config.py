@@ -19,5 +19,8 @@ import sys
 
 PROJECT_DIR=os.path.dirname(os.path.realpath(__file__))
 
+#token expire time in minutes
+TOKEN_EXPIRE=45
+
 sys.path.append(PROJECT_DIR)
 sys.path.append(os.path.join(PROJECT_DIR,'controllers'))

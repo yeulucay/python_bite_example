@@ -21,6 +21,9 @@ class AuthManager():
     Authorization Manager class 
     Manages AuthBase subclasses for token requests
     """
+    # default token expire time in minutes
+    expire_time = 20
+
     def __init__(self, auth_cls, auth_secret):
         self.auth_cls = auth_cls   
         self.auth_secret = auth_secret     
@@ -67,7 +70,7 @@ class AuthManager():
                 
                 # if valid_client and valid_user
                 if bite_auth.is_valid():
-                    exp = datetime.utcnow() + timedelta(minutes=20)
+                    exp = datetime.utcnow() + timedelta(minutes=self.expire_time)
 
                     token_content = {
                         'user': p['username'],
@@ -179,7 +182,15 @@ def authorize(roles=[]):
                         pass
                     
                     if not is_authorized:
+                        # token is not valid
                         return self.unauthorized('Unauthorized request.')
+
+                else:
+                    # authorization header is wrong
+                    return self.unauthorized('Unauthorized request.')
+            else:
+                # authorization header does not exists
+                return self.unauthorized('Unauthorized request.')
 
             return f(self, *args, **kwargs)
         return wrapped

@@ -32,6 +32,7 @@ class Bite():
         # token request
         if self.token_endpoint and env["PATH_INFO"] == self.token_endpoint and self.auth_cls:
             auth_manager = AuthManager(self.auth_cls, self.auth_secret)
+            auth_manager.expire_time = self.auth_expire
             auth_header = env['HTTP_AUTHORIZATION'] if 'HTTP_AUTHORIZATION' in env else ''
             status_code, res_type, result = auth_manager.token_endpoint(env['REQUEST_METHOD'], auth_header, env['wsgi.input'], env['CONTENT_LENGTH']) 
         else:
@@ -66,6 +67,7 @@ class Bite():
         """
         self.config = config
         self.auth_secret = config.AUTH_SECRET if hasattr(config,'AUTH_SECRET') else str(uuid.uuid4())
+        
 
     def route_config(self, route_map):
         """
@@ -90,5 +92,8 @@ class Bite():
             pass
 
         self.token_endpoint = self.config.TOKEN_ENDPOINT if hasattr(self.config, 'TOKEN_ENDPOINT') else '/auth/token'
+        # auth expire time in minutes. if TOKEN_EXPIRE not set in config file then 20 min is default
+        self.auth_expire = self.config.TOKEN_EXPIRE if hasattr(self.config,'TOKEN_EXPIRE') else 20
+
 
         
