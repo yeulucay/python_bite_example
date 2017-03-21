@@ -28,7 +28,7 @@ class TestController(Controller):
     @authorize()
     def index(self):
         print("Test.Index Method called")
-        return self.ok({"test":"result"})
+        return self.ok({"message":"result"})
 
     def action1(self, id):
         print("Test.Action1 GET Method called")
@@ -36,7 +36,7 @@ class TestController(Controller):
         return self.bad_request('bad request message')
 
     @POST
-    @route('fenerbahce')
+    @route('another')
     def action2(self, dto):
         print("Test.Action2 POST Method called")
         print(dto)
@@ -49,6 +49,8 @@ class Test2Controller(Controller):
 
     def index(self):
         print("Test2.Index Method called")
+        return self.ok({"message":"test2 index called"})
 
     def action2(self, action_param2):
         print("Test2.Action2 Method called")
+        return self.ok({"message":"test2 action 2 called"})

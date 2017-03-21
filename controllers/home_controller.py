@@ -24,3 +24,4 @@ class HomeController(Controller):
 
     def index(self):
         print("Home.Index Method called")
+        return self.ok({"message":"hello world!"})
