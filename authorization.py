@@ -11,7 +11,17 @@ class Authorization(AuthBase):
         super(self.__class__, self).__init__()
     
     def user_credentials(self, username, password):
-        self.valid_user = True
+        """
+        username and password inputs 
+        from token request post body
+        """
+
+        self.valid_user = True # currently it grants the user
 
     def client_credentials(self, client_id, client_secret):
-        self.valid_client = True
+        """
+        client_id and client_secret inputs 
+        from token request Authorization header, Basic Authorization
+        """
+
+        self.valid_client = True # currently it grants the client

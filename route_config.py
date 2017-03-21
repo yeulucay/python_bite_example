@@ -19,24 +19,36 @@ from bite.routing import RouteMap
 
 map = RouteMap()
 
+# static route object
+# controller: Test
+# action: Action1
 map.add({
     "name":"blog",
     "template":"/blog/test/{id}",
     "default":{"controller":"Test","action":"Action1"}
 })
 """
+# dynamic-controller route object
+# controller: all the controllers
+# action: Index action of all controllers
 map.add({
     "name":"only_index",
     "template":"/api/{controller}/Index",
     "default":{"action":"Index"}
 })
 
+# dynamic-action route object
+# controller: Test
+# action: all the actions of Test controller
 map.add({
     "name":"only_test",
     "template":"/api/test_static/{action}",
     "default":{"controller":"Test"}
 })
 """
+# dynamic route object
+# controller: all the controllers
+# action: all the actions in the controllers
 map.add({
     "name":"default",
     "template":"/api/{controller}/{action}"

@@ -23,5 +23,8 @@ class HomeController(Controller):
         super(self.__class__, self).__init__()
 
     def index(self):
+        """
+        /home/index GET 
+        """
         print("Home.Index Method called")
         return self.ok({"message":"hello world!"})

@@ -18,10 +18,17 @@ from bite.core import Bite
 import config, route_config
 from authorization import Authorization
 
-
+# Bite instance
 app = Bite()
+
+# routing configuration 
 app.route_config(route_config.map)
+
+# application configuration
 app.config(config)
+
+# authorization 
 app.use_auth(Authorization)
 
+# listen requests
 app.listen('localhost',7000)
